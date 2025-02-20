@@ -17,9 +17,9 @@ function addGeoJSONLayer(map, data) {
     });
 
     var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-        updateTimeDimension: true,
-        duration: 'PT2M',
-        updateTimeDimensionMode: 'replace',
+        updateTimeDimension: false,
+        duration: 'P1Y',//durée affichage après dernier step 1 an !!
+        updateTimeDimensionMode: 'union',
         addlastPoint: true
     });
 
@@ -29,17 +29,36 @@ function addGeoJSONLayer(map, data) {
     geoJSONTDLayer.addTo(map);
 }
 
+function addCountryGeoJSONLayer(map, data) {
+    var geoJSONLayer = L.geoJSON(data);
+
+    var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
+        updateTimeDimension: false,
+        duration: 'P1Y',//durée affichage après dernier step 1 an !!
+        updateTimeDimensionMode: 'union',
+        addlastPoint: true
+    });
+
+    // Show both layers: the geoJSON layer to show the whole track
+    // and the timedimension layer to show the movement of the bus
+    // geoJSONLayer.addTo(map);
+    geoJSONTDLayer.addTo(map);
+}
+
 var map = L.map('map', {
     zoom: 14,
     fullscreenControl: true,
+    timeDimensionOptions: {
+        times: "2019-10-20/2019-12-22/P1D"//Début/Fin/Période 1 jour
+    },
     timeDimensionControl: true,
     timeDimensionControlOptions: {
         timeSliderDragUpdate: true,
         loopButton: true,
-        autoPlay: true,
+        autoPlay: false,
         playerOptions: {
             transitionTime: 1000,
-            loop: true
+            loop: false
         }
     },
     timeDimension: true,
@@ -59,3 +78,21 @@ oReq.addEventListener("load", (function (xhr) {
 }));
 oReq.open('GET', 'data/track_bus699.geojson');
 oReq.send();
+
+var oReqSuppl = new XMLHttpRequest();
+oReqSuppl.addEventListener("load", (function (xhr) {
+    var response = xhr.currentTarget.response;
+    var data = JSON.parse(response);
+    addGeoJSONLayer(map, data);
+}));
+oReqSuppl.open('GET', 'data/track_bus699suppl.geojson');
+oReqSuppl.send();
+
+var oReqMap = new XMLHttpRequest();
+oReqMap.addEventListener("load", (function (xhr) {
+    var response = xhr.currentTarget.response;
+    var data = JSON.parse(response);
+    addCountryGeoJSONLayer(map, data);
+}));
+oReqMap.open('GET', 'data/spain.geojson');
+oReqMap.send();
