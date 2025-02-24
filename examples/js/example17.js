@@ -1,6 +1,6 @@
-function addGeoJSONLayer(map, data) {
+function addGeoJSONLayer(map, data, icon="bus") {
     var icon = L.icon({
-        iconUrl: 'img/bus.png',
+        iconUrl: 'img/' + icon + '.png',
         iconSize: [22, 22],
         iconAnchor: [11, 11]
     });
@@ -30,8 +30,7 @@ function addGeoJSONLayer(map, data) {
 }
 
 function addCountryGeoJSONLayer(map, data) {
-    var geoJSONLayer = L.geoJSON(data);
-
+    var geoJSONLayer = L.geoJSON(data);    
     var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
         updateTimeDimension: false,
         duration: 'P1Y',//durée affichage après dernier step 1 an !!
@@ -64,11 +63,16 @@ var map = L.map('map', {
     timeDimension: true,
     center: [36.72, -4.43]
 });
-
-var osmLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+let googleMap = L.tileLayer('http://{s}.google.com/vt?lyrs=m&hl=fr&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
+    attribution: '© GoogleMaps'
 });
-osmLayer.addTo(map);
+// var osmLayer = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+// });
+// osmLayer.addTo(map);
+googleMap.addTo(map);
 
 var oReq = new XMLHttpRequest();
 oReq.addEventListener("load", (function (xhr) {
@@ -83,7 +87,8 @@ var oReqSuppl = new XMLHttpRequest();
 oReqSuppl.addEventListener("load", (function (xhr) {
     var response = xhr.currentTarget.response;
     var data = JSON.parse(response);
-    addGeoJSONLayer(map, data);
+    console.log(data);
+    addGeoJSONLayer(map, data, "running");
 }));
 oReqSuppl.open('GET', 'data/track_bus699suppl.geojson');
 oReqSuppl.send();
@@ -92,6 +97,7 @@ var oReqMap = new XMLHttpRequest();
 oReqMap.addEventListener("load", (function (xhr) {
     var response = xhr.currentTarget.response;
     var data = JSON.parse(response);
+    console.log(data);
     addCountryGeoJSONLayer(map, data);
 }));
 oReqMap.open('GET', 'data/spain.geojson');
