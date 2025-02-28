@@ -57,7 +57,7 @@ var map = L.map('map', {
         autoPlay: false,
         playerOptions: {
             transitionTime: 1000,
-            loop: false
+            loop: true
         }
     },
     timeDimension: true,
