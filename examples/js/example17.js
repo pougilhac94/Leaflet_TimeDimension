@@ -18,7 +18,7 @@ function addGeoJSONLayer(map, data, icon="bus") {
 
     var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
         updateTimeDimension: false,
-        duration: 'P1Y',//durée affichage après dernier step 1 an !!
+        duration: 'P1D',//durée affichage après dernier step 1 an !!
         updateTimeDimensionMode: 'union',
         addlastPoint: true
     });
